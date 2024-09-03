@@ -78,17 +78,15 @@ const jobSchema = Joi.array().items(
     }).required()
 ).required();
 
-// Route to save job data
 app.post('/save', authenticateToken, async (req, res) => {
-    // Validate the request body against the schema
     const { error } = jobSchema.validate(req.body);
     if (error) return res.status(400).send(`Validation error: ${error.details[0].message}`);
 
     try {
         const jobs = req.body;
-        
+
         // Clear existing jobs
-        await Job.deleteMany(); 
+        await Job.deleteMany();
 
         // Save new jobs
         for (const job of jobs) {
@@ -101,6 +99,7 @@ app.post('/save', authenticateToken, async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+
 
 app.listen(3000, () => {
     console.log('Server started on port 3000');
