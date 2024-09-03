@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welding Job Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="login-container">
+        <form id="login-form">
+            <h2>Login</h2>
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+    <div id="excel-container" class="hidden">
+        <button id="add-row-btn">Add New Row</button>
+        <table id="job-table">
+            <thead>
+                <tr>
+                    <th>Job ID</th>
+                    <th>Material</th>
+                    <th>Thickness</th>
+                    <th>Welding Type</th>
+                    <th>Settings</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be dynamically added here -->
+            </tbody>
+        </table>
+        <button id="save-btn">Save Data</button>
+    </div>
+    <!-- Form to add new rows -->
+    <div id="add-row-form" class="hidden">
+        <h3>Add New Job</h3>
+        <form id="new-job-form">
+            <input type="text" id="new-job-id" placeholder="Job ID" required>
+            <input type="text" id="new-material" placeholder="Material" required>
+            <input type="text" id="new-thickness" placeholder="Thickness" required>
+            <input type="text" id="new-welding-type" placeholder="Welding Type" required>
+            <input type="text" id="new-settings" placeholder="Settings" required>
+            <button type="submit">Add Job</button>
+            <button type="button" id="cancel-add">Cancel</button>
+        </form>
+    </div>
+    <script src="scripts.js"></script>
+</body>
+</html>
