@@ -33,6 +33,29 @@ document.getElementById('logout').addEventListener('click', function () {
     window.location.reload();
 });
 
+// Example login request
+async function login(username, password) {
+    try {
+        const response = await fetch('/api/login', { // Adjust if using serverless functions
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text(); // Get error response text
+            throw new Error(`Error ${response.status}: ${errorText}`);
+        }
+
+        const data = await response.json();
+        console.log('Login successful:', data);
+        // Handle successful login
+    } catch (error) {
+        console.error('Error logging in:', error);
+    }
+}
+
+
 document.getElementById('save-btn').addEventListener('click', function () {
     const rows = document.querySelectorAll('#job-table tbody tr');
     const data = [];
