@@ -3,7 +3,7 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
 
-    fetch('api/login.js', {
+    fetch('https://nettisivu-psi.vercel.app/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
