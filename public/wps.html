@@ -4,55 +4,77 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WPS Page</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background-color: #f0f0f0;
-        }
-        .container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 800px;
-            width: 90%;
-            margin: 20px auto;
-        }
-        h1 {
-            color: #333;
-        }
-        p {
-            color: #555;
-        }
-        .home-button {
-            margin-top: 20px;
-            text-align: center;
-        }
-        .home-button a {
-            text-decoration: none;
-            background-color: #007bff;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to your external CSS file -->
 </head>
 <body>
-    <div class="container">
-        <h1>WPS Page</h1>
-        <p>This is the WPS page. It contains content distinct from both the main page and the WPQR page.</p>
-        <p>Further information specific to WPS can be displayed here.</p>
-        
-        <div class="home-button">
-            <a href="index.html">Home</a>
+    <div class="sidebar">
+        <h2>FLAWLESS WELDING</h2>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="wpqr.html">WPQR</a></li>
+            <li><a href="wps.html" class="active">WPS</a></li>
+            <li><a href="login.html">Logout</a></li>
+        </ul>
+    </div>
+    <div class="content">
+        <h1>Search WPS Certificate</h1>
+        <div class="search-section">
+            <label for="employer">Employer</label>
+            <input type="text" id="employer" name="employer">
+            
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" name="firstName">
+            
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" name="lastName">
+            
+            <button type="button">Search</button>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>Certificate</th>
+                    <th>Initials</th>
+                    <th>Name</th>
+                    <th>Birthdate</th>
+                    <th>Process ID</th>
+                    <th>Remarks</th>
+                    <th>Validity</th>
+                    <th>Employer</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="checkbox"></td>
+                    <td>159021-04</td>
+                    <td>FL 21</td>
+                    <td>Daniel Jones</td>
+                    <td>10.11.1982</td>
+                    <td>EN ISO 9606-2</td>
+                    <td>Good</td>
+                    <td>03/2025</td>
+                    <td>Company C</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox"></td>
+                    <td>159022-02</td>
+                    <td>FL 19</td>
+                    <td>Amy Brown</td>
+                    <td>23.7.1993</td>
+                    <td>287-1 141 T BW 6/6 S/S</td>
+                    <td>Excellent</td>
+                    <td>08/2025</td>
+                    <td>Company D</td>
+                </tr>
+                <!-- Additional rows as needed -->
+            </tbody>
+        </table>
+
+        <div class="action-buttons">
+            <button type="button">Add Row</button>
+            <button type="button">Save Data</button>
         </div>
     </div>
 </body>
