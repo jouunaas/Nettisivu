@@ -8,16 +8,21 @@ const Joi = require('joi');
 const app = express();
 const secretKey = process.env.SECRET_KEY || 'defaultsecret';
 
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/mydatabase', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => console.log('MongoDB connected'))
-.catch(err => console.error('MongoDB connection error:', err));
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/mydatabase')
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.error('MongoDB connection error:', err));
 
 const User = mongoose.model('User', new mongoose.Schema({
   username: String,
   password: String,
+}));
+
+const Job = mongoose.model('Job', new mongoose.Schema({
+  jobId: String,
+  material: String,
+  thickness: String,
+  weldingType: String,
+  settings: String,
 }));
 
 app.use(express.json());
