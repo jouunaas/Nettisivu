@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const Joi = require('joi');
+const serverless = require('serverless-http');
 
 const app = express();
 app.use(express.json());
@@ -66,6 +67,8 @@ function authenticateToken(req, res, next) {
         next();
     });
 }
+
+module.exports.handler = serverless(app);
 
 // Define a refined schema for job validation
 const jobSchema = Joi.array().items(
