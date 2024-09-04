@@ -12,7 +12,7 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            return response.text().then(text => { throw new Error(`Network response was not ok: ${text}`); });
         }
         return response.json();
     })
@@ -32,22 +32,20 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
 });
 
 document.getElementById('logout').addEventListener('click', function () {
-    // Clear the token and reload the page
     localStorage.removeItem('jwtToken');
     window.location.reload();
 });
 
-// Example login request
 async function login(username, password) {
     try {
-        const response = await fetch('/api/login', { // Adjust if using serverless functions
+        const response = await fetch('/api/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
         });
 
         if (!response.ok) {
-            const errorText = await response.text(); // Get error response text
+            const errorText = await response.text();
             throw new Error(`Error ${response.status}: ${errorText}`);
         }
 
@@ -59,16 +57,14 @@ async function login(username, password) {
     }
 }
 
-
 document.getElementById('save-btn').addEventListener('click', function () {
     const rows = document.querySelectorAll('#job-table tbody tr');
     const data = [];
 
     rows.forEach(row => {
         const cells = row.querySelectorAll('td');
-        if (cells.length > 1) { // Check if the row contains cells
+        if (cells.length > 1) {
             const rowData = {
-                // Assuming column order based on your earlier HTML
                 certificate: cells[1].textContent.trim(),
                 initials: cells[2].textContent.trim(),
                 name: cells[3].textContent.trim(),
@@ -82,26 +78,25 @@ document.getElementById('save-btn').addEventListener('click', function () {
         }
     });
 
-    // Log data to check structure
     console.log('Saving data:', data);
 
     const token = localStorage.getItem('jwtToken');
-    fetch('/save', {
+    fetch('/api/save', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}` // Send token in the Authorization header
+            'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(data)
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            return response.text().then(text => { throw new Error(`Network response was not ok: ${text}`); });
         }
         return response.json();
     })
     .then(result => {
-        console.log('Save result:', result); // Log result to verify success
+        console.log('Save result:', result);
         alert('Data saved successfully!');
     })
     .catch(error => {
@@ -116,28 +111,25 @@ document.getElementById('search-form').addEventListener('submit', function (e) {
     const firstname = document.getElementById('firstname').value;
     const lastname = document.getElementById('lastname').value;
 
-    // Example of filtering rows based on search criteria
     const rows = document.querySelectorAll('#job-table tbody tr');
     rows.forEach(row => {
         const cells = row.getElementsByTagName('td');
         const cellEmployer = cells[8].textContent.toLowerCase();
-        const cellFirstname = cells[2].textContent.toLowerCase(); // Assuming first name is in 3rd column
-        const cellLastname = cells[3].textContent.toLowerCase();  // Assuming last name is in 4th column
+        const cellFirstname = cells[2].textContent.toLowerCase();
+        const cellLastname = cells[3].textContent.toLowerCase();
 
         if (
             (employer === '' || cellEmployer.includes(employer.toLowerCase())) &&
             (firstname === '' || cellFirstname.includes(firstname.toLowerCase())) &&
             (lastname === '' || cellLastname.includes(lastname.toLowerCase()))
         ) {
-            row.style.display = ''; // Show row
+            row.style.display = '';
         } else {
-            row.style.display = 'none'; // Hide row
+            row.style.display = 'none';
         }
     });
 });
 
-
-// Function to add rows dynamically
 function addRow(certificate, initials, name, birthdate, processId, remarks, validity, employer) {
     const tableBody = document.querySelector('#job-table tbody');
     const row = document.createElement('tr');
@@ -155,26 +147,20 @@ function addRow(certificate, initials, name, birthdate, processId, remarks, vali
     tableBody.appendChild(row);
 }
 
-// Add initial rows
 addRow('147811-02', 'FL 30', 'John Doe', '31.7.1974', '287-1 141 T BW 8/8 S/S', 'Good', '12/2024', 'ABC Corp');
 addRow('147390-01', 'FL 17', 'Jane Doe', '9.1.1989', 'EN ISO 9606-1', 'Excellent', '06/2025', 'XYZ Ltd');
 
-// Add a row when "Add Row" button is clicked
 document.getElementById('add-row-button').addEventListener('click', function () {
-    addRow('New Certificate', 'New Initials', 'New Name', 'New Birthdate', 'New Process ID', 'New Remarks', 'New Validity', 'New Employer');
-});
-
-document.getElementById('add-row-button').addEventListener('click', function() {
     document.getElementById('add-row-modal').classList.remove('hidden');
 });
 
-document.getElementById('close-modal').addEventListener('click', function() {
+document.getElementById('close-modal').addEventListener('click', function () {
     document.getElementById('add-row-modal').classList.add('hidden');
 });
 
 document.getElementById('add-row-form').addEventListener('submit', function(e) {
     e.preventDefault();
-    
+
     const certificate = document.getElementById('cert-input').value;
     const initials = document.getElementById('initials-input').value;
     const name = document.getElementById('name-input').value;
@@ -198,7 +184,7 @@ document.getElementById('add-row-form').addEventListener('submit', function(e) {
         <td>${validity}</td>
         <td>${employer}</td>
     `;
-    
+
     tableBody.appendChild(newRow);
     document.getElementById('add-row-modal').classList.add('hidden');
 });
