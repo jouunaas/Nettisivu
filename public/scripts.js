@@ -3,13 +3,13 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
 
-    fetch('/api/login', {
+    fetch('https://nettisivu-psi.vercel.app/api/login', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({ username, password })
-    })
+      })         
     .then(response => {
         if (!response.ok) {
             return response.text().then(text => { throw new Error(`Network response was not ok: ${text}`); });

@@ -6,12 +6,18 @@ const jwt = require('jsonwebtoken');
 const Joi = require('joi');
 
 const app = express();
+const router = express.Router();
 const secretKey = process.env.SECRET_KEY || 'defaultsecret';
 
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/mydatabase')
+// Connect to MongoDB
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/mydatabase', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.error('MongoDB connection error:', err));
 
+// Define schemas
 const User = mongoose.model('User', new mongoose.Schema({
   username: String,
   password: String,
@@ -25,9 +31,21 @@ const Job = mongoose.model('Job', new mongoose.Schema({
   settings: String,
 }));
 
+const jobSchema = Joi.array().items(
+  Joi.object({
+    jobId: Joi.string().required(),
+    material: Joi.string().required(),
+    thickness: Joi.string().required(),
+    weldingType: Joi.string().required(),
+    settings: Joi.string().required(),
+  }).required()
+).required();
+
+// Middleware
 app.use(express.json());
 
-app.post('/api/register', async (req, res) => {
+// Routes
+router.post('/api/register', async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const user = new User({ username: req.body.username, password: hashedPassword });
@@ -39,7 +57,7 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-app.post('/api/login', async (req, res) => {
+router.post('/api/login', async (req, res) => {
   try {
     const user = await User.findOne({ username: req.body.username });
     if (user && await bcrypt.compare(req.body.password, user.password)) {
@@ -54,17 +72,7 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-const jobSchema = Joi.array().items(
-  Joi.object({
-    jobId: Joi.string().required(),
-    material: Joi.string().required(),
-    thickness: Joi.string().required(),
-    weldingType: Joi.string().required(),
-    settings: Joi.string().required(),
-  }).required()
-).required();
-
-app.post('/api/save', authenticateToken, async (req, res) => {
+router.post('/api/save', authenticateToken, async (req, res) => {
   const { error } = jobSchema.validate(req.body);
   if (error) return res.status(400).send(`Validation error: ${error.details[0].message}`);
 
@@ -81,6 +89,7 @@ app.post('/api/save', authenticateToken, async (req, res) => {
   }
 });
 
+// Authentication middleware
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -92,4 +101,8 @@ function authenticateToken(req, res, next) {
   });
 }
 
+// Apply routes to the app
+app.use('/', router);
+
+// Export handler for serverless deployment
 module.exports.handler = serverless(app);
