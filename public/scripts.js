@@ -3,32 +3,34 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
 
-    // Send login request to the server
     fetch('/api/login', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({ username, password })
-      })
-      .then(response => {
+    })
+    .then(response => {
         if (!response.ok) {
-          return response.text().then(text => { throw new Error(text) });
+            throw new Error('Network response was not ok');
         }
         return response.json();
-      })
-      .then(data => {
+    })
+    .then(data => {
         if (data.token) {
-          localStorage.setItem('jwtToken', data.token);
-          document.getElementById('login-container').classList.add('hidden');
-          document.getElementById('main-content').classList.remove('hidden');
+            localStorage.setItem('jwtToken', data.token);
+            document.getElementById('login-container').classList.add('hidden');
+            document.getElementById('main-content').classList.remove('hidden');
         } else {
-          document.getElementById('login-error').textContent = 'Incorrect login details';
+            document.getElementById('login-error').textContent = 'Incorrect login details';
         }
-      })
-      console.error('Error logging in:', error);    
-      document.getElementById('login-error').textContent = 'Error logging in: ' + error.message;
+    })
+    .catch(error => {
+        console.error('Error logging in:', error);
+        document.getElementById('login-error').textContent = 'An error occurred. Please try again.';
+    });
 });
+
 
 document.getElementById('logout').addEventListener('click', function () {
     // Clear the token and reload the page
