@@ -4,7 +4,7 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
     const password = document.getElementById('password').value;
 
     // Send login request to the server
-    fetch('/login', {
+    fetch('/api/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -24,7 +24,7 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
             document.getElementById('login-error').textContent = 'Incorrect login details';
         }
     })
-    .catch(error => console.error('Error logging in:', error));
+    .catch(error => console.error('Error logging in:', error));    
 });
 
 document.getElementById('logout').addEventListener('click', function () {
