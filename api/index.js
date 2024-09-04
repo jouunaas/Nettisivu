@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Joi = require('joi');
+const cors = require('cors'); // Import cors
 
 const app = express();
 const router = express.Router();
@@ -43,6 +44,7 @@ const jobSchema = Joi.array().items(
 
 // Middleware
 app.use(express.json());
+app.use(cors()); // Use CORS middleware
 
 // Routes
 router.post('/api/register', async (req, res) => {
