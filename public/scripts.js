@@ -31,7 +31,6 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
     });
 });
 
-
 document.getElementById('logout').addEventListener('click', function () {
     // Clear the token and reload the page
     localStorage.removeItem('jwtToken');
