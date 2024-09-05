@@ -2,8 +2,8 @@ const express = require('express');
 const serverless = require('serverless-http');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const cors = require('cors'); // Import cors
-const { Pool } = require('pg'); // Import pg
+const cors = require('cors');
+const { Pool } = require('pg');
 
 const app = express();
 const router = express.Router();
@@ -27,7 +27,7 @@ pool.connect((err) => {
 
 // Middleware
 app.use(express.json());
-app.use(cors()); // Use CORS middleware
+app.use(cors());
 
 // Register a new user
 app.post('/api/register', async (req, res) => {
@@ -71,8 +71,7 @@ app.post('/api/login', async (req, res) => {
 // Save job data
 router.post('/api/save', authenticateToken, async (req, res) => {
   try {
-    // Assuming the job data schema matches the table schema
-    await pool.query('DELETE FROM jobs'); // Clear existing jobs
+    await pool.query('DELETE FROM jobs');
     for (const job of req.body) {
       const query = 'INSERT INTO jobs (jobId, material, thickness, weldingType, settings) VALUES ($1, $2, $3, $4, $5)';
       const values = [job.jobId, job.material, job.thickness, job.weldingType, job.settings];
