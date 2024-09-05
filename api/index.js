@@ -1,10 +1,10 @@
 const express = require('express');
-const serverless = require('serverless-http');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Joi = require('joi');
-const cors = require('cors'); // Import cors
+const cors = require('cors');
+require('dotenv').config();  // To use .env file
 
 const app = express();
 const router = express.Router();
@@ -79,7 +79,7 @@ router.post('/api/save', authenticateToken, async (req, res) => {
   if (error) return res.status(400).send(`Validation error: ${error.details[0].message}`);
 
   try {
-    await Job.deleteMany();
+    await Job.deleteMany();  // Remove old job data
     for (const job of req.body) {
       const newJob = new Job(job);
       await newJob.save();
@@ -106,5 +106,8 @@ function authenticateToken(req, res, next) {
 // Apply routes to the app
 app.use('/', router);
 
-// Export handler for serverless deployment
-module.exports.handler = serverless(app);
+// Start the server locally
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
