@@ -1,24 +1,15 @@
 const express = require('express');
 const serverless = require('serverless-http');
-const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const Joi = require('joi');
 const cors = require('cors'); // Import cors
+const { Pool } = require('pg'); // Import pg
 
 const app = express();
 const router = express.Router();
 const secretKey = process.env.SECRET_KEY || 'defaultsecret';
-const { Pool } = require('pg');
 
-// Connect to MongoDB
-//mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/mydatabase', {
-//  useNewUrlParser: true,
-//  useUnifiedTopology: true
-//})
-//  .then(() => console.log('MongoDB connected'))
-//  .catch(err => console.error('MongoDB connection error:', err));
-
+// Connect to PostgreSQL
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
@@ -34,35 +25,11 @@ pool.connect((err) => {
   }
 });
 
-
-// Define schemas
-const User = mongoose.model('User', new mongoose.Schema({
-  username: String,
-  password: String,
-}));
-
-const Job = mongoose.model('Job', new mongoose.Schema({
-  jobId: String,
-  material: String,
-  thickness: String,
-  weldingType: String,
-  settings: String,
-}));
-
-const jobSchema = Joi.array().items(
-  Joi.object({
-    jobId: Joi.string().required(),
-    material: Joi.string().required(),
-    thickness: Joi.string().required(),
-    weldingType: Joi.string().required(),
-    settings: Joi.string().required(),
-  }).required()
-).required();
-
 // Middleware
 app.use(express.json());
 app.use(cors()); // Use CORS middleware
 
+// Register a new user
 app.post('/api/register', async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -76,6 +43,7 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
+// Login user
 app.post('/api/login', async (req, res) => {
   try {
     const query = 'SELECT * FROM users WHERE username = $1';
@@ -100,15 +68,15 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+// Save job data
 router.post('/api/save', authenticateToken, async (req, res) => {
-  const { error } = jobSchema.validate(req.body);
-  if (error) return res.status(400).send(`Validation error: ${error.details[0].message}`);
-
   try {
-    await Job.deleteMany();
+    // Assuming the job data schema matches the table schema
+    await pool.query('DELETE FROM jobs'); // Clear existing jobs
     for (const job of req.body) {
-      const newJob = new Job(job);
-      await newJob.save();
+      const query = 'INSERT INTO jobs (jobId, material, thickness, weldingType, settings) VALUES ($1, $2, $3, $4, $5)';
+      const values = [job.jobId, job.material, job.thickness, job.weldingType, job.settings];
+      await pool.query(query, values);
     }
     res.send('Data saved successfully');
   } catch (err) {
