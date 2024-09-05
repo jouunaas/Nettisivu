@@ -4,19 +4,36 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Joi = require('joi');
-const cors = require('cors');
+const cors = require('cors'); // Import cors
 
 const app = express();
 const router = express.Router();
 const secretKey = process.env.SECRET_KEY || 'defaultsecret';
+const { Pool } = require('pg');
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/mydatabase', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.error('MongoDB connection error:', err));
+//mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/mydatabase', {
+//  useNewUrlParser: true,
+//  useUnifiedTopology: true
+//})
+//  .then(() => console.log('MongoDB connected'))
+//  .catch(err => console.error('MongoDB connection error:', err));
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
+
+pool.connect((err) => {
+  if (err) {
+    console.error('Postgres connection error:', err.stack);
+  } else {
+    console.log('Postgres connected');
+  }
+});
+
 
 // Define schemas
 const User = mongoose.model('User', new mongoose.Schema({
@@ -46,12 +63,12 @@ const jobSchema = Joi.array().items(
 app.use(express.json());
 app.use(cors()); // Use CORS middleware
 
-// Routes
-router.post('/api/register', async (req, res) => {
+app.post('/api/register', async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    const user = new User({ username: req.body.username, password: hashedPassword });
-    await user.save();
+    const query = 'INSERT INTO users (username, password) VALUES ($1, $2)';
+    const values = [req.body.username, hashedPassword];
+    await pool.query(query, values);
     res.send('User registered');
   } catch (err) {
     console.error('Error registering user:', err);
@@ -59,14 +76,23 @@ router.post('/api/register', async (req, res) => {
   }
 });
 
-router.post('/api/login', async (req, res) => {
+app.post('/api/login', async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.body.username });
-    if (user && await bcrypt.compare(req.body.password, user.password)) {
-      const token = jwt.sign({ username: user.username }, secretKey);
-      res.json({ token });
+    const query = 'SELECT * FROM users WHERE username = $1';
+    const values = [req.body.username];
+    const result = await pool.query(query, values);
+
+    if (result.rows.length > 0) {
+      const user = result.rows[0];
+      const validPassword = await bcrypt.compare(req.body.password, user.password);
+      if (validPassword) {
+        const token = jwt.sign({ username: user.username }, secretKey);
+        res.json({ token });
+      } else {
+        res.status(400).json({ error: 'Invalid credentials' });
+      }
     } else {
-      res.status(400).json({ error: 'Invalid credentials' });
+      res.status(400).json({ error: 'User not found' });
     }
   } catch (err) {
     console.error('Error during login:', err);
@@ -76,7 +102,7 @@ router.post('/api/login', async (req, res) => {
 
 router.post('/api/save', authenticateToken, async (req, res) => {
   const { error } = jobSchema.validate(req.body);
-  if (error) return res.status(400).send(Validation error: ${error.details[0].message});
+  if (error) return res.status(400).send(`Validation error: ${error.details[0].message}`);
 
   try {
     await Job.deleteMany();
