@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { Pool } = require('pg'); // Import pg for PostgreSQL
+const { Pool } = require('pg');
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
@@ -12,7 +12,6 @@ module.exports = async (req, res) => {
         const { username, password } = req.body;
 
         try {
-            // Route for logging in a user
             const query = 'SELECT * FROM users WHERE username = $1';
             const values = [username];
             const result = await pool.query(query, values);
@@ -23,8 +22,8 @@ module.exports = async (req, res) => {
 
                 if (isMatch) {
                     const token = jwt.sign(
-                        { userId: user.id }, // Assuming you use 'id' for user primary key
-                        process.env.JWT_SECRET || 'defaultsecret', // Fallback secret
+                        { userId: user.id },
+                        process.env.JWT_SECRET || 'defaultsecret',
                         { expiresIn: '1h' }
                     );
                     res.status(200).json({ token });
@@ -36,7 +35,7 @@ module.exports = async (req, res) => {
             }
         } catch (error) {
             console.error('Error during login:', error);
-            res.status(500).json({ message: 'Server error', error });
+            res.status(500).json({ message: 'Server error', error: error.message });
         }
     } else {
         res.status(405).json({ message: 'Method Not Allowed' });
