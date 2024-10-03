@@ -3,7 +3,7 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
 
-    fetch('/api/login.js', {
+    fetch('/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -15,7 +15,7 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
         //    return response.text().then(text => { throw new Error(`Network response was not ok: ${text}`); });
         //}
         //return response.json();
-    })
+    //})
     .then(data => {
         if (data.token) {
             localStorage.setItem('jwtToken', data.token);
