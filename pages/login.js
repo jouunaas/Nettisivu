@@ -1,31 +1,34 @@
+// pages/login.js
 import { useState } from 'react';
-import { useRouter } from 'next/router';
 
-const Login = () => {
+const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const router = useRouter();
+  const [error, setError] = useState('');
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch('/api/auth/login', {
+    setError('');
+
+    const res = await fetch('/api/auth/login', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({ username, password }),
     });
 
-    if (response.ok) {
-      const data = await response.json();
-      localStorage.setItem('token', data.token); // Store token for further use
-      router.push('/dashboard'); // Redirect to dashboard
+    if (res.ok) {
+      const data = await res.json();
+      // Handle successful login (e.g., redirect or store token)
     } else {
-      alert('Invalid credentials');
+      const errorData = await res.json();
+      setError(errorData.message);
     }
   };
 
   return (
-    <form onSubmit={handleLogin}>
-      <h1>Login</h1>
+    <form onSubmit={handleSubmit}>
       <input
         type="text"
         placeholder="Username"
@@ -41,8 +44,9 @@ const Login = () => {
         required
       />
       <button type="submit">Login</button>
+      {error && <p>{error}</p>}
     </form>
   );
 };
 
-export default Login;
+export default LoginPage;

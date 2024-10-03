@@ -1,5 +1,1 @@
-{
-  "/_app": "pages/_app.js",
-  "/_error": "pages/_error.js",
-  "/_document": "pages/_document.js"
-}
+{"/_error":"pages/_error.js","/_app":"pages/_app.js","/api/auth/login":"pages/api/auth/login.js","/api/auth/register":"pages/api/auth/register.js","/api/welding/[id]":"pages/api/welding/[id].js","/dashboard":"pages/dashboard.html","/api/welding":"pages/api/welding.js","/login":"pages/login.html","/_document":"pages/_document.js","/404":"pages/404.html"}
