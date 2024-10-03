@@ -1,6 +1,6 @@
 // pages/login.js
-import { useState } from 'react';
-import React from 'react';
+import React, { useState, useContext } from 'react';
+
 
 const LoginHeader = () => {
     return <h1>Login Page</h1>;
