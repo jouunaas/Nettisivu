@@ -36,7 +36,7 @@ app.post('/api/register', async (req, res) => {
     const query = 'INSERT INTO users (username, password) VALUES ($1, $2)';
     const values = [req.body.username, hashedPassword];
     await pool.query(query, values);
-    res.send('User registered');
+    res.status(201).send('User registered');
   } catch (err) {
     console.error('Error registering user:', err);
     res.status(500).send('Error registering user');
@@ -54,7 +54,7 @@ app.post('/api/login', async (req, res) => {
       const user = result.rows[0];
       const validPassword = await bcrypt.compare(req.body.password, user.password);
       if (validPassword) {
-        const token = jwt.sign({ username: user.username }, secretKey);
+        const token = jwt.sign({ username: user.username }, secretKey, { expiresIn: '1h' });
         res.json({ token });
       } else {
         res.status(400).json({ error: 'Invalid credentials' });
@@ -71,7 +71,7 @@ app.post('/api/login', async (req, res) => {
 // Save job data
 router.post('/api/save', authenticateToken, async (req, res) => {
   try {
-    await pool.query('DELETE FROM jobs');
+    await pool.query('DELETE FROM jobs');  // Consider changing this to an update if needed
     for (const job of req.body) {
       const query = 'INSERT INTO jobs (jobId, material, thickness, weldingType, settings) VALUES ($1, $2, $3, $4, $5)';
       const values = [job.jobId, job.material, job.thickness, job.weldingType, job.settings];

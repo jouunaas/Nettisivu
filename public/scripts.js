@@ -2,7 +2,7 @@ const loginForm = document.getElementById('login-form');
 const loginContainer = document.getElementById('login-container');
 const mainContent = document.getElementById('main-content');
 const loginError = document.getElementById('login-error');
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+import { API_URL } from './config.js'; // Adjust the path as necessary
 
 loginForm.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -10,7 +10,7 @@ loginForm.addEventListener('submit', async (event) => {
     const password = loginForm.password.value;
 
     try {
-        const response = await fetch(`${apiUrl}/api/login`, {
+        const response = await fetch(`${API_URL}/api/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -33,6 +33,7 @@ loginForm.addEventListener('submit', async (event) => {
         loginError.textContent = 'An error occurred. Please try again later.';
     }
 });
+
 
 // Add event listener to logout
 const logoutButton = document.getElementById('logout');
