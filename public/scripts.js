@@ -1,14 +1,14 @@
 document.getElementById('login-form').addEventListener('submit', function (e) {
     e.preventDefault();
     const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
+    const password = 'anypassword'; // Hardcoded to any password since password validation is bypassed
 
     fetch('/api/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ username, password })  // Send the username with any password
     })
     .then(response => {
         if (!response.ok) {
@@ -20,7 +20,7 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
     })
     .then(data => {
         if (data.token) {
-            localStorage.setItem('jwtToken', data.token);
+            localStorage.setItem('jwtToken', data.token);  // Save the token
             document.getElementById('login-container').classList.add('hidden');
             document.getElementById('main-content').classList.remove('hidden');
         } else {
@@ -34,9 +34,10 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
 });
 
 document.getElementById('logout').addEventListener('click', function () {
-    localStorage.removeItem('jwtToken');
-    window.location.reload();
+    localStorage.removeItem('jwtToken');  // Remove token on logout
+    window.location.reload();  // Reload page
 });
+
 
 async function login(username, password) {
     try {
