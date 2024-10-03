@@ -1,6 +1,6 @@
 // pages/_app.js
-
-import { ThemeProvider } from '../lib/ThemeContext'; // Adjust the path if you keep ThemeContext in a different directory
+import React from 'react'; // Ensure React is imported
+import { ThemeProvider } from '../lib/ThemeContext'; // Adjust the path if necessary
 import '../styles/globals.css';
 
 function MyApp({ Component, pageProps }) {
