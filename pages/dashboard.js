@@ -2,13 +2,17 @@
 import { useEffect, useState } from 'react';
 
 const Dashboard = () => {
-  const [weldingData, setWeldingData] = useState([]);
+  const [weldingData, setWeldingData] = useState([]); // Proper use of useState
 
   useEffect(() => {
     const fetchWeldingData = async () => {
       const res = await fetch('/api/welding');
-      const data = await res.json();
-      setWeldingData(data);
+      if (res.ok) {
+        const data = await res.json();
+        setWeldingData(data);
+      } else {
+        console.error('Failed to fetch welding data:', res.statusText);
+      }
     };
 
     fetchWeldingData();
