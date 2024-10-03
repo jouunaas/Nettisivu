@@ -10,11 +10,11 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
         },
         body: JSON.stringify({ username, password })
       })         
-    .then(response => {
-        if (!response.ok) {
-            return response.text().then(text => { throw new Error(`Network response was not ok: ${text}`); });
-        }
-        return response.json();
+    //.then(response => {
+        //if (!response.ok) {
+        //    return response.text().then(text => { throw new Error(`Network response was not ok: ${text}`); });
+        //}
+        //return response.json();
     })
     .then(data => {
         if (data.token) {
