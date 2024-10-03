@@ -9,7 +9,7 @@ loginForm.addEventListener('submit', async (event) => {
     const password = loginForm.password.value;
 
     try {
-        const response = await fetch('https://yourapiurl.com/api/login', {
+        const response = await fetch('https://nettisivu-9v92gra4c-jouunaas-projects.vercel.app/api/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -48,7 +48,7 @@ if (logoutButton) {
 async function addJobData(jobData) {
     const token = localStorage.getItem('token');
     try {
-        const response = await fetch('https://yourapiurl.com/api/save', {
+        const response = await fetch('https://nettisivu-9v92gra4c-jouunaas-projects.vercel.app/api/save', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
