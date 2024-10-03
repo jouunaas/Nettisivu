@@ -2,7 +2,7 @@ const loginForm = document.getElementById('login-form');
 const loginContainer = document.getElementById('login-container');
 const mainContent = document.getElementById('main-content');
 const loginError = document.getElementById('login-error');
-const apiUrl = process.env.API_URL;
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 loginForm.addEventListener('submit', async (event) => {
     event.preventDefault();
