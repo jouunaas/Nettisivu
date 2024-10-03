@@ -6,16 +6,18 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
     fetch('/api/login', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({ username, password })
-      })         
-    //.then(response => {
-        //if (!response.ok) {
-       //     return response.text().then(text => { throw new Error(`Network response was not ok: ${text}`); });
-       // }
-      //  return response.json();
-   // })
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.text().then(text => { 
+                throw new Error(`Network response was not ok: ${response.status} ${text}`);
+            });
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.token) {
             localStorage.setItem('jwtToken', data.token);
@@ -26,8 +28,8 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
         }
     })
     .catch(error => {
-        console.error('Error logging in:', error);
-        document.getElementById('login-error').textContent = 'An error occurred. Please try again.';
+        console.error('Error logging in:', error.message);
+        document.getElementById('login-error').textContent = `Error occurred: ${error.message}`;
     });
 });
 
