@@ -1,14 +1,14 @@
 document.getElementById('login-form').addEventListener('submit', function (e) {
     e.preventDefault();
     const username = document.getElementById('username').value;
-    const password = 'anypassword'; // Hardcoded to any password since password validation is bypassed
+    const password = 'anypassword'; // Hardcoded password
 
     fetch('/api/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ username, password })  // Send the username with any password
+        body: JSON.stringify({ username, password })
     })
     .then(response => {
         if (!response.ok) {
@@ -20,7 +20,7 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
     })
     .then(data => {
         if (data.token) {
-            localStorage.setItem('jwtToken', data.token);  // Save the token
+            localStorage.setItem('jwtToken', data.token);
             document.getElementById('login-container').classList.add('hidden');
             document.getElementById('main-content').classList.remove('hidden');
         } else {
@@ -28,7 +28,11 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
         }
     })
     .catch(error => {
-        console.error('Error logging in:', error.message);
+        console.error('Error logging in:', error);
+        if (error.response) {
+            console.error('Response data:', error.response.data);
+            console.error('Response status:', error.response.status);
+        }
         document.getElementById('login-error').textContent = `Error occurred: ${error.message}`;
     });
 });
@@ -37,7 +41,6 @@ document.getElementById('logout').addEventListener('click', function () {
     localStorage.removeItem('jwtToken');  // Remove token on logout
     window.location.reload();  // Reload page
 });
-
 
 async function login(username, password) {
     try {
